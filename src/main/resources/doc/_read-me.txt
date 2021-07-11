@@ -24,4 +24,4 @@ An "html" folder containing the html documentation files for the language define
 
 There are also two : 
 contents.xml : is used by javahelp to build the guide tree
-jindexer-stops.txt : this file specifies the words that should not be included in the full text search of the help.
+jindexer-stops.txt : this file specifies the words that should not be included in the full text search of the help .
