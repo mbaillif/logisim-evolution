@@ -356,7 +356,7 @@ public class ComponentSelector extends JTable {
         return; // null node?
       }
 
-      SignalInfo.paintIcon(comp, opt, c, g, needsTriangle() ? x + 10 : x, y);
+      SignalInfo.paintIconSelect(comp, opt, c, g, needsTriangle() ? x + 10 : x, y);
 
       if (!needsTriangle()) return;
 

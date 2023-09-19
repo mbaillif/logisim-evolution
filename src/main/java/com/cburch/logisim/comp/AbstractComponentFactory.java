@@ -142,7 +142,7 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   }
 
   @Override
-  public void paintIcon(ComponentDrawContext context, int x, int y, AttributeSet attrs) {
+  public void paintIconSelect(ComponentDrawContext context, int x, int y, AttributeSet attrs) {
     final var g = context.getGraphics();
     if (toolIcon != null) {
       toolIcon.paintIcon(context.getDestination(), g, x + 2, y + 2);

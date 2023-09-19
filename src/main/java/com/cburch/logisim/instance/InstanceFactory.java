@@ -50,6 +50,7 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
   private StringGetter defaultToolTip;
   private String iconName;
   private Icon icon;
+  private Object iconPar;
   private Attribute<?>[] attrs;
   private Object[] defaults;
   private AttributeSet defaultSet;
@@ -109,6 +110,7 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
     this.displayName = displayName;
     this.iconName = null;
     this.icon = null;
+    this.iconPar = null;
     this.attrs = null;
     this.defaults = null;
     this.bounds = Bounds.EMPTY_BOUNDS;
@@ -119,7 +121,7 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
   }
   // event methods
   protected void configureNewInstance(Instance instance) {
-    // dummy imlementation
+    // dummy implementation
   }
 
   public boolean contains(Location loc, AttributeSet attrs) {
@@ -132,6 +134,10 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
 
   public Icon getIcon() {
     return icon;
+  }
+  
+  public Object getIconPar() {
+    return iconPar;
   }
 
   @Override
@@ -278,38 +284,81 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
     painter.setFactory(null, null);
   }
 
+  /**
+   * Determines how to paint component icons
+   *
+   * @param ComponentDrawContext component drawing environment
+   * @param x Starting X coordinate.
+   * @param y Starting Y coordinate.
+   * @param AttributeSet Attribute list
+   * 
+   * Based on the data contained in the iconName fields and the component's 
+   * paintIcon method, it decides how to draw the icon.
+   * 
+   * if the descendant has implemented the paintIcon method, execute and exit
+   * if no icon assigned 
+   *    if iconName != null find the picture and draw
+   *       if the picture is not found pain default icon 
+   *    else pain default icon
+   * else 
+   *   paint procedural icon
+   * 
+   */
   @Override
-  public final void paintIcon(ComponentDrawContext context, int x, int y, AttributeSet attrs) {
+  public final void paintIconSelect(ComponentDrawContext context, int x, int y, AttributeSet attrs) {
     final var painter = context.getInstancePainter();
     painter.setFactory(this, attrs);
     final var gfx = painter.getGraphics();
     gfx.translate(x, y);
-    paintIcon(painter);
+    
+    // if the component has a paintIcon method  if not, factory set to zero
+    if (paintIcon(painter, iconPar) ) {
+      painter.setFactory(null, null);
+    };
     gfx.translate(-x, -y);
 
+    // this code is executed if the component has no paintIcon method
     if (painter.getFactory() == null) {
       var i = icon;
       if (i == null) {
         var n = iconName;
-        if (n != null) {
-          i = IconsUtil.getIcon(n);
-          if (i == null) {
-            n = null;
+        if (n != null) { 
+          i = IconsUtil.getIcon(n); 
+          if (i == null) { 
+            super.paintIconSelect(context, x, y, attrs); // paint default icon 
+          } else { // paint picture icon
+            i.paintIcon(context.getDestination(), gfx, x + 2, y + 2);
           }
+        } else { 
+          super.paintIconSelect(context, x, y, attrs); // paint default icon 
         }
-      }
-      if (i != null) {
+      } else { // paint procedural icon
         i.paintIcon(context.getDestination(), gfx, x + 2, y + 2);
-      } else {
-        super.paintIcon(context, x, y, attrs);
-      }
+      } 
     }
   }
-
+  
+  /**
+   * Overloading by the descendant transfers the task of drawing the icon. 
+   * @param  painter InstancePainter to draw
+   * the non-overloaded method lets InstanceFactory redraw the icon
+   */
   public void paintIcon(InstancePainter painter) {
     painter.setFactory(null, null);
   }
-
+  
+  /**
+   * Overloading by the descendant transfers the task of drawing the icon. 
+   * @param  painter InstancePainter to draw
+   * @param  par optional parameter 
+   * return  True Icon is redrawn by instanceFactory False icon is not redrawn
+   * the non-overloaded method lets InstanceFactory redraw the icon
+   */
+  public boolean paintIcon(InstancePainter painter, Object par) {
+    paintIcon(painter);
+    return false;
+  }
+  
   public abstract void paintInstance(InstancePainter painter);
 
   public abstract void propagate(InstanceState state);
@@ -328,7 +377,7 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
   }
 
   public void setIcon(Icon value) {
-    iconName = "";
+    iconName = null;
     icon = value;
   }
 
@@ -336,7 +385,11 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
     iconName = value;
     icon = null;
   }
-
+  
+  public void setIconName(Object value) {
+    iconPar = value;
+  }
+  
   public void setInstanceLogger(Class<? extends InstanceLogger> loggerClass) {
     if (isClassOk(loggerClass, InstanceLogger.class)) {
       this.loggerClass = loggerClass;

@@ -317,11 +317,11 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
 
         @Override
         public void paintIcon(java.awt.Component c, Graphics g, int x, int y) {
-          SignalInfo.paintIcon(path[n - 1], option, c, g, x, y);
+          SignalInfo.paintIconSelect(path[n - 1], option, c, g, x, y);
         }
       };
 
-  public static void paintIcon(Component comp, Object opt, java.awt.Component c, Graphics g, int x, int y) {
+  public static void paintIconSelect(Component comp, Object opt, java.awt.Component c, Graphics g, int x, int y) {
     if (comp == null) return;
     if (opt != null) {
       // todo
@@ -330,7 +330,7 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
     } else {
       Graphics g2 = g.create();
       ComponentDrawContext context = new ComponentDrawContext(c, null, null, g, g2);
-      comp.getFactory().paintIcon(context, x, y, comp.getAttributeSet());
+      comp.getFactory().paintIconSelect(context, x, y, comp.getAttributeSet());
       g2.dispose();
     }
   }

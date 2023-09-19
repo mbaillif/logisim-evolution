@@ -124,7 +124,7 @@ public class SplitterFactory extends AbstractComponentFactory {
   }
 
   @Override
-  public void paintIcon(ComponentDrawContext c, int x, int y, AttributeSet attrs) {
+  public void paintIconSelect(ComponentDrawContext c, int x, int y, AttributeSet attrs) {
     final var g = c.getGraphics();
     if (toolIcon != null) {
       toolIcon.paintIcon(c.getDestination(), g, x + 2, y + 2);

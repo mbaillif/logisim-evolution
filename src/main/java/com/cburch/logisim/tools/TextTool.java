@@ -334,6 +334,6 @@ public class TextTool extends Tool {
 
   @Override
   public void paintIcon(ComponentDrawContext c, int x, int y) {
-    Text.FACTORY.paintIcon(c, x, y, null);
+    Text.FACTORY.paintIconSelect(c, x, y, null);
   }
 }

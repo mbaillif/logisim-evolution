@@ -140,7 +140,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     }
 
     @Override
-    public void paintIcon(ComponentDrawContext context, int x, int y, AttributeSet attrs) {
+    public void paintIconSelect(ComponentDrawContext context, int x, int y, AttributeSet attrs) {
       drawVideoIcon(context, x, y);
     }
   }

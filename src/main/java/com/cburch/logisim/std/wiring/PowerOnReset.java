@@ -19,6 +19,7 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.gui.icons.PorIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -77,7 +78,7 @@ public class PowerOnReset extends InstanceFactory {
   }
     
   public PowerOnReset() {
-    super(_ID, S.getter("PowerOnResetComponent"));
+    super(_ID, S.getter("powerOnResetComponent"));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -87,12 +88,12 @@ public class PowerOnReset extends InstanceFactory {
         },
         new Object[] {
           Direction.EAST,
-          SIZE_WIDE,
+          SIZE_MEDIUM,
           HTOL,
           2,
         });
     setFacingAttribute(StdAttr.FACING);
-    setIconName("por.png");
+    setIcon(new PorIcon(0));
     setInstancePoker(Poker.class);
   }
 
@@ -186,7 +187,6 @@ public class PowerOnReset extends InstanceFactory {
   protected void configureNewInstance(Instance instance) {
     instance.addAttributeListener();
     instance.setPorts(new Port[] {new Port(0, 0, Port.OUTPUT, BitWidth.ONE)});
- 
   }
 
   @Override
@@ -208,9 +208,19 @@ public class PowerOnReset extends InstanceFactory {
     if (attr == StdAttr.FACING || attr == PORSIZE) {
       instance.recomputeBounds();
     }
-    
   }
-
+  
+  @Override
+  public boolean paintIcon(InstancePainter painter, Object par) {
+    final var pstat = painter.getAttributeValue(PORTRANS);
+    if (pstat == HTOL) {
+      setIcon(new PorIcon(1));
+    } else {
+      setIcon(new PorIcon(2));
+    }
+    return true;
+  }
+  
   @Override
   public void paintInstance(InstancePainter painter) {
 
@@ -227,16 +237,25 @@ public class PowerOnReset extends InstanceFactory {
     g.drawRect(x, y, width, height);
 
     final var psize = painter.getAttributeValue(PORSIZE); 
+    int offset;
+    int offsettmp;
+    int widthtmp;
+    int heighttmp;
+    int x1;
+    int x2;
+    int x3;
+    int y1;
+    int y2;
 
     if (psize == SIZE_WIDE) {
       Font old = g.getFont();
       g.setFont(old.deriveFont(16.0f).deriveFont(Font.BOLD));
       String txt = S.get("porLongName"); 
-     
+
       FontMetrics fm = g.getFontMetrics();  
       int wide = Math.max(width, height);
 
-      int offset = (wide - fm.stringWidth(txt)) / 2;
+      offset = (wide - fm.stringWidth(txt)) / 2;
       Direction facing = painter.getAttributeValue(StdAttr.FACING);
 
       if (((facing == Direction.NORTH) || (facing == Direction.SOUTH)) && (g instanceof Graphics2D g2)) {
@@ -247,17 +266,16 @@ public class PowerOnReset extends InstanceFactory {
         g.drawString(txt, 0, 0);
         g2.rotate(-facing.toRadians());
         g2.translate(-xpos, -ypos);
+        offset = 4;
+        offsettmp = 7;
       } else {
         g.drawString(txt, x + offset, y + fm.getDescent() + 20);
+        offset = 10;
+        offsettmp = 4;
       }
+      widthtmp = 30;
+      heighttmp = 30;
     } else {
-      int x1;
-      int x2;
-      int x3;
-      int y1;
-      int y2;
-      int offset;
-      
       Font old = g.getFont();
       if  (psize == SIZE_NARROW) {
         g.setFont(old.deriveFont(6.0f).deriveFont(Font.BOLD));
@@ -266,44 +284,45 @@ public class PowerOnReset extends InstanceFactory {
         g.setFont(old.deriveFont(14.0f).deriveFont(Font.BOLD));
         offset = 13;
       }
-      
-      y1 = y + height - 4;
-      y2 = y + offset;
-      x1 = x + 3;
-      x2 = x + width - 4;
-      
-      Graphics2D g2 = (Graphics2D) g;
-      var oldStroke = g2.getStroke();
-      g2.setStroke(new BasicStroke(1));
-      g.setColor(Color.BLUE);
-      g.drawLine(x1, y1, x2, y1);
-      x1 = x1 + 1;
-      y1 = y1 + 1;
-      g.drawLine(x1, y2, x1, y1); 
-      g2.setStroke(oldStroke);
-      
-      x1 = x + 4;
-      x2 = x + width / 2;
-      x3 = x + width - 4;
-      y1 = y + offset + 2;
-      y2 = y + height - 5;
-
-      final var pstat = painter.getAttributeValue(PORTRANS); 
-      if (pstat == LTOH) {
-        var tmp = y1;
-        y1 = y2;
-        y2 = tmp;
-      }
-      
-      g.setColor(Color.RED);
-      g.drawLine(x1, y1, x2, y1);
-      g.drawLine(x2, y1, x2, y2);
-      g.drawLine(x2, y2, x3, y2);
-
       g.setColor(Color.BLACK);
-      String txt = S.get("PowerOnResetComponent");
+      String txt = S.get("powerOnResetComponent");
       g.drawString(txt, x + 2, y + offset - 1);
+      offsettmp  = 0;
+      widthtmp = width;
+      heighttmp = height;
     }
+
+    y1 = y + heighttmp - 4;
+    y2 = y + offset;
+    x1 = x + 3 + offsettmp;
+    x2 = x + widthtmp - 4;
+
+    Graphics2D g2 = (Graphics2D) g;
+    var oldStroke = g2.getStroke();
+    g2.setStroke(new BasicStroke(1));
+    g.setColor(Color.BLUE);
+    g.drawLine(x1, y1, x2, y1);
+    x1 = x1 + 1;
+    y1 = y1 + 1;
+    g.drawLine(x1, y2, x1, y1); 
+    g2.setStroke(oldStroke);
+
+    x1 = x + 4 + offsettmp;
+    x2 = x + offsettmp + widthtmp / 2;
+    x3 = x + offsettmp + widthtmp - 4;
+    y1 = y + offset + 2;
+    y2 = y + heighttmp - 5;
+
+    final var pstat = painter.getAttributeValue(PORTRANS); 
+    if (pstat == LTOH) {
+      int tmp = y1;
+      y1 = y2;
+      y2 = tmp;
+    }
+
+    g.setColor(Color.RED);
+    g2.drawPolyline(new int[] {x1, x2, x2, x3}, 
+        new int[] {y1,y1,y2,y2},4);
 
     painter.drawPorts();
   }
@@ -315,7 +334,6 @@ public class PowerOnReset extends InstanceFactory {
       ret = new PORState(state);
       state.setData(ret);
     }
-
     state.setPort(0, Value.createKnown(BitWidth.ONE, ret.getValue() ? ret.gettstart() : ret.gettend()), 0);
 
     // TODO Auto-generated method stub

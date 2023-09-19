@@ -650,7 +650,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
     ComponentFactory source = getFactory();
     if (source != null) {
       final var base = getBaseAttributes();
-      source.paintIcon(c, x, y, base);
+      source.paintIconSelect(c, x, y, base);
     }
   }
 

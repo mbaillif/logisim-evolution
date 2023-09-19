@@ -88,7 +88,7 @@ public interface ComponentFactory extends AttributeDefaultProvider {
 
   int[] clockPinIndex(netlistComponent comp);
 
-  void paintIcon(ComponentDrawContext context, int x, int y, AttributeSet attrs);
+  void paintIconSelect(ComponentDrawContext context, int x, int y, AttributeSet attrs);
 
   boolean requiresGlobalClock();
 
