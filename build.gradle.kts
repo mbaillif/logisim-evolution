@@ -16,8 +16,8 @@ plugins {
   id("com.github.ben-manes.versions") version "0.51.0"
   java
   application
-  id("com.gradleup.shadow") version "8.3.3"
-  id("org.sonarqube") version "5.1.0.4882"
+  id("com.gradleup.shadow") version "8.3.5"
+  id("org.sonarqube") version "6.0.1.5171"
 }
 
 repositories {
@@ -31,16 +31,16 @@ application {
 dependencies {
   implementation("org.hamcrest:hamcrest:3.0")
   implementation("javax.help:javahelp:2.0.05")
-  implementation("com.fifesoft:rsyntaxtextarea:3.5.1")
+  implementation("com.fifesoft:rsyntaxtextarea:3.5.3")
   implementation("net.sf.nimrod:nimrod-laf:1.2")
   implementation("org.drjekyll:colorpicker:2.0.1")
   implementation("at.swimmesberger:swingx-core:1.6.8")
   implementation("org.scijava:swing-checkbox-tree:1.0.2")
   implementation("org.slf4j:slf4j-api:2.0.16")
   implementation("org.slf4j:slf4j-simple:2.0.16")
-  implementation("com.formdev:flatlaf:3.5.2")
+  implementation("com.formdev:flatlaf:3.5.4")
   implementation("commons-cli:commons-cli:1.9.0")
-  implementation("org.apache.commons:commons-text:1.12.0")
+  implementation("org.apache.commons:commons-text:1.13.0")
 
   // NOTE: Do not upgrade the jflex version. Later versions do not work.
   compileOnly("de.jflex:jflex:1.4.1")
@@ -49,9 +49,9 @@ dependencies {
   // See: https://github.com/logisim-evolution/logisim-evolution/issues/709
   // implementation("org.apache.xmlgraphics:batik-swing:1.14")
 
-  testImplementation(platform("org.junit:junit-bom:5.11.3"))
-  testImplementation("org.junit.jupiter:junit-jupiter:5.11.3")
-  testImplementation("org.mockito:mockito-junit-jupiter:5.14.2")
+  testImplementation(platform("org.junit:junit-bom:5.11.4"))
+  testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
+  testImplementation("org.mockito:mockito-junit-jupiter:5.15.2")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
@@ -625,7 +625,9 @@ tasks.register("genBuildInfo") {
  *
  * Generates the VhdlSyntax.java file
 */
-tasks.register("genVhdlSyntax") {
+open class ExecOperationsJarTask @Inject constructor(@Internal val execOperations: ExecOperations) : Jar()
+
+tasks.register<ExecOperationsJarTask>("genVhdlSyntax") {
   val sourceFile = "${projectDir}/src/main/jflex/com/cburch/logisim/vhdl/syntax/VhdlSyntax.jflex"
   val skeletonFile = "${projectDir}/support/jflex/skeleton.default"
   val buildDir = ext.get(BUILD_DIR) as String
@@ -655,7 +657,7 @@ tasks.register("genVhdlSyntax") {
 
   doLast() {
     logging.captureStandardOutput(LogLevel.DEBUG)
-    javaexec {
+    execOperations.javaexec {
       classpath = files(jflexJarFileName)
       args = listOf(
           "--nobak",
