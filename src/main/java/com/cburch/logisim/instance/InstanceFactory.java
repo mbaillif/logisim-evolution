@@ -22,6 +22,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.gui.log.LoggableContract;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.Pokable;
 import com.cburch.logisim.tools.key.KeyConfigurator;
 import com.cburch.logisim.util.IconsUtil;
@@ -312,9 +313,8 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
     gfx.translate(x, y);
     
     // if the component has a paintIcon method  if not, factory set to zero
-    if (paintIcon(painter, iconPar) ) {
-      painter.setFactory(null, null);
-    };
+    gfx.setColor(new Color(AppPreferences.COMPONENT_ICON_COLOR.get()));
+    paintIcon(painter);
     gfx.translate(-x, -y);
 
     // this code is executed if the component has no paintIcon method

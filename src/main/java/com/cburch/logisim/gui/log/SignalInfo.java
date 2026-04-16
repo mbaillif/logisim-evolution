@@ -86,7 +86,7 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
 
     circ[0] = root;
     for (int i = 1; i < n; i++) {
-      SubcircuitFactory f = (SubcircuitFactory) path[i - 1].getFactory();
+      final var f = (SubcircuitFactory) path[i - 1].getFactory();
       circ[i] = f.getSubcircuit();
     }
     computeName();
